@@ -1,0 +1,41 @@
+services:
+  transfer.api:
+    build:
+      context: .
+      dockerfile: src/Planet.Transfer.Api.StartUp/Dockerfile 
+    container_name: transfer_api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - HttpClientsSettings__MyTransfersApi_BaseAddress=${HttpClientsSettings__MyTransfersApi_BaseAddress}
+      - HttpClientsSettings__MyTransfersApi_ApiKey=${HttpClientsSettings__MyTransfersApi_ApiKey}
+      - HttpClientsSettings__GeoApiAutocomplete_BaseAddress=${HttpClientsSettings__GeoApiAutoComplete_BaseAddress}
+      - HttpClientsSettings__GeoApiAutocomplete_ApiKey=${HttpClientsSettings__GeoApiAutoComplete_ApiKey}
+      - HttpClientsSettings__GeoApiSearch_BaseAddress=${HttpClientsSettings__GeoApiSearch_BaseAddress}
+      - HttpClientsSettings__GeoApiSearch_ApiKey=${HttpClientsSettings__GeoApiSearch_ApiKey}
+      - SSL__Path=${ASPNETCORE_Kestrel__Certificates__Default__Path}
+      - SSL__Password=${ASPNETCORE_Kestrel__Certificates__Default__Password}
+      - Swagger__Url=${Swagger_Url}
+    ports:
+      - "5052:8080"
+      - "7056:8081"
+    volumes:
+      - ./https:/https:ro
+    depends_on:
+      - transfer.db 
+
+  transfer.db:
+    image: postgres
+    container_name: transfer_db
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - transferdata:/var/lib/postgresql/data
+
+volumes:
+  transferdata:
