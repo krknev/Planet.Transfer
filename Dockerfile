@@ -12,12 +12,12 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["/Planet.Transfer.API/src/Planet.Transfer.Api.StartUp/Planet.Transfer.Api.StartUp.csproj", "src/Planet.Transfer.Api.StartUp/"]
-COPY ["/Planet.Transfer.API/src/Planet.Transfer.Api.Infrastructure/Planet.Transfer.Api.Infrastructure.csproj", "src/Planet.Transfer.Api.Infrastructure/"]
-COPY ["/Planet.Transfer.API/src/Planet.Transfer.Api.Application/Planet.Transfer.Api.Application.csproj", "src/Planet.Transfer.Api.Application/"]
-COPY ["/Planet.Transfer.API/src/Planet.Transfer.Api.Domain/Planet.Transfer.Api.Domain.csproj", "src/Planet.Transfer.Api.Domain/"]
-COPY ["/Planet.Transfer.API/src/Planet.Transfer.Api.Web/Planet.Transfer.Api.Web.csproj", "src/Planet.Transfer.Api.Web/"]
-COPY ["/Planet.Transfer.API/lib/Common.Lib/Common.Lib.csproj", "lib/Common.Lib/"]
+COPY ["/src/Planet.Transfer.Api.StartUp/Planet.Transfer.Api.StartUp.csproj", "src/Planet.Transfer.Api.StartUp/"]
+COPY ["/src/Planet.Transfer.Api.Infrastructure/Planet.Transfer.Api.Infrastructure.csproj", "src/Planet.Transfer.Api.Infrastructure/"]
+COPY ["/src/Planet.Transfer.Api.Application/Planet.Transfer.Api.Application.csproj", "src/Planet.Transfer.Api.Application/"]
+COPY ["/src/Planet.Transfer.Api.Domain/Planet.Transfer.Api.Domain.csproj", "src/Planet.Transfer.Api.Domain/"]
+COPY ["/src/Planet.Transfer.Api.Web/Planet.Transfer.Api.Web.csproj", "src/Planet.Transfer.Api.Web/"]
+COPY ["/lib/Common.Lib/Common.Lib.csproj", "lib/Common.Lib/"]
 RUN dotnet restore "./src/Planet.Transfer.Api.StartUp/Planet.Transfer.Api.StartUp.csproj"
 COPY . .
 WORKDIR "./src/Planet.Transfer.Api.StartUp"
