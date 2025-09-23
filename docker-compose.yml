@@ -13,6 +13,8 @@ services:
       - HttpClientsSettings__GeoApiAutocomplete_ApiKey=${HttpClientsSettings__GeoApiAutoComplete_ApiKey}
       - HttpClientsSettings__GeoApiSearch_BaseAddress=${HttpClientsSettings__GeoApiSearch_BaseAddress}
       - HttpClientsSettings__GeoApiSearch_ApiKey=${HttpClientsSettings__GeoApiSearch_ApiKey}
+      - HttpClientsSettings__Google_BaseAddress=${HttpClientsSettings__Google_BaseAddress}
+      - HttpClientsSettings__Google_ApiKey=${HttpClientsSettings__Google_ApiKey}
       - SSL__Path=${ASPNETCORE_Kestrel__Certificates__Default__Path}
       - SSL__Password=${ASPNETCORE_Kestrel__Certificates__Default__Password}
       - Swagger__Url=${Swagger_Url}
