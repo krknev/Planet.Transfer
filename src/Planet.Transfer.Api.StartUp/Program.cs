@@ -3,7 +3,15 @@ using Planet.Transfer.Api.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.ConfigureHttpsDefaults(httpsOptions =>
+//    {
+//        var sslPath = builder.Configuration["SSL:Path"];
+//        var sslPassword = builder.Configuration["SSL:Password"];
+//        httpsOptions.ServerCertificate = X509CertificateLoader.LoadPkcs12FromFile(sslPath, sslPassword);
+//    });
+//});
 builder.Services
     .AddApplicationConfiguration(builder.Configuration)
     .AddApiComponents(builder.Configuration)

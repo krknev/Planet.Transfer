@@ -12,6 +12,9 @@
 
         public const string GeoApiSearchHttpClientName = "GeoApiSearch";
         public static string GeoApiSearch_API_KEY = "empty";
+
+        public const string GoogleHttpClientName = "Google";
+        public static string Google_API_KEY = "empty";
     }
     public class HttpClientsSettings : Dictionary<string, HttpClientSettings> { }
     public class HttpClientSettings

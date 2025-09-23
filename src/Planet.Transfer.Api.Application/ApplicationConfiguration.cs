@@ -26,6 +26,9 @@ public static class ApplicationConfiguration
         ApplicationConstatns.GeoApiSearch_API_KEY = configuration[$"{nameof(HttpClientsSettings)}:{ApplicationConstatns.GeoApiSearchHttpClientName}:{ApplicationConstatns.PrivateApiKey}"]
                    ?? throw new NullReferenceException("unable to load private ApiKey");
 
+        ApplicationConstatns.Google_API_KEY = configuration[$"{nameof(HttpClientsSettings)}:{ApplicationConstatns.GoogleHttpClientName}:{ApplicationConstatns.PrivateApiKey}"]
+                   ?? throw new NullReferenceException("unable to load private ApiKey");
+
         services.Configure<HttpClientsSettings>(configuration.GetSection(nameof(HttpClientsSettings)));
 
         HttpClientsSettings httpClientsSettings = configuration
