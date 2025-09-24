@@ -15,6 +15,8 @@
 
         public const string GoogleHttpClientName = "Google";
         public static string Google_API_KEY = "empty";
+
+        public const string GoogleApisHttpClientName = "GoogleApis";
     }
     public class HttpClientsSettings : Dictionary<string, HttpClientSettings> { }
     public class HttpClientSettings
