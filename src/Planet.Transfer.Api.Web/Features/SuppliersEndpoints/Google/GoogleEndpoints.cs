@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapAutocomplete;
-using Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapDetails;
+using Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapAutocomplete.Queries;
+using Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapDetails.Queries;
 using Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapDirections.Queries;
+using Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapGeocode.Queries;
 
 namespace Planet.Transfer.Api.Web.Features.SuppliersEndpoints.MyTransfer
 {
@@ -89,6 +90,29 @@ namespace Planet.Transfer.Api.Web.Features.SuppliersEndpoints.MyTransfer
                 " Example values:" +
                 "\"placeId\": \"PLACE_ID\"," +
                 "\"Language\":\"en\"}");
+
+            group.MapGet("/maps/geocode", async (
+               [FromQuery] string? address,
+               [FromQuery] string? language,
+               IMediator mediator,
+               CancellationToken cancellationToken) =>
+           {
+               var result = await mediator.Send(new GoogleGeoCodeQuery()
+               {
+                   Address = address,
+                   Language = language
+               }, cancellationToken);
+               return Results.Ok(result);
+           })
+               .WithName("Google maps geocode")
+               .WithDisplayName("Google maps geocode")
+               .Produces<string>(StatusCodes.Status200OK)
+               .ProducesProblem(StatusCodes.Status400BadRequest)
+               .WithSummary("Google maps geocode")
+               .WithDescription(
+               " Example values:" +
+               "\"geocode\": \"geocode\"," +
+               "\"Language\":\"en\"}");
         }
     }
 }

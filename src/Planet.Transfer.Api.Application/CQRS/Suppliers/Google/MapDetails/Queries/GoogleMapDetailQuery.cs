@@ -1,7 +1,7 @@
 ﻿using Common.Lib;
 using Common.Lib.Handler;
 
-namespace Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapDetails
+namespace Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapDetails.Queries
 {
     public class GoogleMapDetailQuery : IRequest<Result<string>>
     {

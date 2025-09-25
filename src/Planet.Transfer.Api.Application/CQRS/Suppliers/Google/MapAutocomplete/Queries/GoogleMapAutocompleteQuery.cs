@@ -1,7 +1,7 @@
 ﻿using Common.Lib;
 using Common.Lib.Handler;
 
-namespace Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapAutocomplete
+namespace Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapAutocomplete.Queries
 {
     public class GoogleMapAutocompleteQuery : IRequest<Result<string>>
     {
