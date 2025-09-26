@@ -8,9 +8,9 @@ namespace Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapDirections.Qu
         public string? Origin { get; set; }
         public string? Destination { get; set; }
         public string? Mode { get; set; }
-        public class GoogleMapDirectionsHandler(IHttpClientFactory httpClientFactory) : IRequestHandler<GoogleMapDirectionsQuery, Result<string>>
+        public class GoogleMapDirectionsHandler() : IRequestHandler<GoogleMapDirectionsQuery, Result<string>>
         {
-            private readonly HttpClient _httpClient = httpClientFactory.CreateClient(ApplicationConstatns.GoogleHttpClientName);
+            //private readonly HttpClient _httpClient = httpClientFactory.CreateClient(ApplicationConstatns.GoogleHttpClientName);
 
             public async Task<Result<string>> Handle(GoogleMapDirectionsQuery request, CancellationToken cancellationToken)
             {
@@ -30,14 +30,14 @@ namespace Planet.Transfer.Api.Application.CQRS.Suppliers.Google.MapDirections.Qu
                 {
                     endpoint += $"&mode={request.Mode}";
                 }
-                var response = await _httpClient.GetAsync(endpoint);
+                //var response = await _httpClient.GetAsync(endpoint);
                 //    response.EnsureSuccessStatusCode();
 
-                var content = await response.Content.ReadAsStringAsync();
+                //var content = await response.Content.ReadAsStringAsync();
 
                 //var resultValue = Newtonsoft.Json.JsonConvert.DeserializeObject<MyTransferBookingBuIdResult>(content)
                 //    ?? throw new AggregateException($"Unable desialize {nameof(MyTransferBookingBuIdResult)}");
-                return Result<string>.Success(content ?? string.Empty);
+                return Result<string>.Success("https://www.google.com/" + endpoint);
             }
         }
     }
