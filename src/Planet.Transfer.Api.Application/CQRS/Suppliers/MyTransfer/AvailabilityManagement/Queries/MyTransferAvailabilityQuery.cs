@@ -29,6 +29,7 @@ namespace Planet.Transfer.Api.Application.CQRS.Suppliers.MyTransfer.Availability
         public required double OriginLng { get; set; } = 0.1278;
         public DateTime PickupDate { get; set; }
         public string? PromoCode { get; set; }
+        public bool? ОneWay { get; set; }
 
         public class MyTransferAvailabilityHandler(IHttpClientFactory httpClientFactory) : IRequestHandler<MyTransferAvailabilityQuery, Result<MyTransferAvailabilityResult>>
         {
@@ -44,6 +45,7 @@ namespace Planet.Transfer.Api.Application.CQRS.Suppliers.MyTransfer.Availability
                      $"&destinationLat={request.DestinationLat}&destinationLng={request.DestinationLng}" +
                      $"&infants={request.Infants}" +
                      "&lang=EN" +
+                      $"&оneWay={request.ОneWay}" +
                      $"&originLat={request.OriginLat}&originLng={request.OriginLng}" +
                      $"&pickupDate={encodedDate}";
                 if (!string.IsNullOrWhiteSpace(request.PromoCode))
