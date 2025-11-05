@@ -1,0 +1,60 @@
+name: Build & Push Docker Images (Sequential)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  OWNER: ${{ github.repository_owner }}
+  IMAGE: planet-api
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+# Get the latest version tag from GHCR or start at 1.0.0
+      - name: Determine next version
+        id: version 
+        run: | 
+          REPO="${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE }}" 
+          echo "Fetching tags for $REPO ..." 
+          TAGS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \ https://api.github.com/orgs/${{ env.OWNER }}/packages/container/${{ env.IMAGE }}/versions \ | jq -r '.[].metadata.container.tags[]?' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V || true)
+          echo "Existing tags: $TAGS" 
+          if [ -z "$TAGS" ]; then NEXT_VERSION="v1.0.0" 
+          else 
+            LATEST=$(echo "$TAGS" | tail -n 1) 
+            MAJOR=$(echo $LATEST | cut -d. -f1 | tr -d v) 
+            MINOR=$(echo $LATEST | cut -d. -f2) 
+            PATCH=$(echo $LATEST | cut -d. -f3) 
+            NEXT_PATCH=$((PATCH + 1)) 
+            NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}" 
+          fi 
+            echo "Next version: $NEXT_VERSION"
+            echo "VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+
+      - name: Build image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .
+          push: true
+          tags: | 
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE }}:latest 
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE }}:${{ env.VERSION }}
+
+      - name: Push image
+        run: docker push ${{ env.REGISTRY }}/${{ env.OWNER }}/${{env.IMAGE}}:latest
