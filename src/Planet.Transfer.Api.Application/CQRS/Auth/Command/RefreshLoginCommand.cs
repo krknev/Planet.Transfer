@@ -1,8 +1,7 @@
 ﻿using Common.Lib;
 using Common.Lib.Handler;
-using Planet.Transfer.Api.Application.CQRS.Auth.Result;
 
-namespace Planet.Transfer.Api.Application.CQRS.Auth.Command
+namespace Five.Best.Api.Application.CQRS.Auth.Command
 {
     public class RefreshLoginCommand : IRequest<Result<FullLoginResult>>
     {
@@ -15,9 +14,8 @@ namespace Planet.Transfer.Api.Application.CQRS.Auth.Command
                 await Task.CompletedTask;
                 return Result<FullLoginResult>.Success(new FullLoginResult()
                 {
-                    IdToken = Guid.NewGuid().ToString(),
+                    Token = Guid.NewGuid().ToString(),
                     RefreshToken = Guid.NewGuid().ToString(),
-                    ExpiresAt = DateTime.UtcNow.AddMinutes(3)
                 });
             }
         }

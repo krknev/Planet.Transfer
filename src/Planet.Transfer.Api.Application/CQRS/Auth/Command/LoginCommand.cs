@@ -6,14 +6,24 @@ namespace Planet.Transfer.Api.Application.CQRS.Auth.Command
 {
     public class LoginCommand : IRequest<Result<LoginResult>>
     {
-        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+        public bool RememberMe { get; set; }
 
-        public class LoginHandler : IRequestHandler<LoginCommand, Result<LoginResult>>
+        public class LoginHandler(IIdentityService identityService) : IRequestHandler<LoginCommand, Result<LoginResult>>
         {
             public async Task<Result<LoginResult>> Handle(LoginCommand request, CancellationToken cancellationToken)
             {
-                await Task.CompletedTask;
-                return Result<LoginResult>.Success(new LoginResult() { IdToken = Guid.NewGuid().ToString(), ExpiresAt = DateTime.UtcNow.AddMinutes(3) });
+                try
+                {
+                    var result = await identityService.SignInUserAsync(request, cancellationToken);
+
+                    return Result<LoginResult>.Success(result);
+                }
+                catch (Exception ex)
+                {
+                    return Result<LoginResult>.Failure(new Error("Unauthorized", ex.Message));
+                }
             }
         }
     }

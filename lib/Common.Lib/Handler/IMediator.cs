@@ -2,6 +2,7 @@
 public interface IMediator
 {
     Task Send(IRequest request, CancellationToken cancellationToken = default);
+    Task<Result> Send(IRequest<Result> request, CancellationToken cancellationToken = default);
     Task<TResponse> Send<TResponse>(IRequest<Result<TResponse>> request, CancellationToken cancellationToken = default);
 }
 
@@ -51,5 +52,30 @@ public class Mediator(IServiceProvider serviceProvider) : IMediator
         return (TResponse)((dynamic)result).Value!; // assuming Result<T> has a .Value
     }
 
+    public async Task<Result> Send(IRequest<Result> request, CancellationToken cancellationToken = default)
+    {
+        var requestType = request.GetType();
+
+        var interfaceType = requestType
+            .GetInterfaces()
+            .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>));
+
+        if (interfaceType == null)
+            throw new InvalidOperationException($"Request type {requestType.Name} does not implement IRequest<>");
+
+        var handlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, typeof(Result));
+        var handler = serviceProvider.GetService(handlerType);
+        if (handler == null)
+            throw new InvalidOperationException($"No handler registered for {requestType.Name}");
+
+        var method = handlerType.GetMethod("Handle");
+        if (method == null)
+            throw new InvalidOperationException($"Handler {handler.GetType().Name} does not contain a valid Handle method");
+
+        var resultTask = method.Invoke(handler, new object[] { request, cancellationToken })!;
+        var result = await (dynamic)resultTask;
+
+        return (Result)((dynamic)result)!;
+    }
 }
 

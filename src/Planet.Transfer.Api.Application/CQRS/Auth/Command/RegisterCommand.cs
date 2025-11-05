@@ -1,19 +1,32 @@
-﻿using Common.Lib.Handler;
+﻿
+using Common.Lib;
+using Common.Lib.Handler;
 
 namespace Planet.Transfer.Api.Application.CQRS.Auth.Command
 {
-    public class RegisterCommand : IRequest
+    public class RegisterCommand : IRequest<Common.Lib.Result>
     {
-        public string? PhoneNumber { get; set; }
-        public string? Email { get; set; }
-        public string? FullName { get; set; }
 
-        public class RegisterHandler : IRequestHandler<RegisterCommand>
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+        public string? ConfirmPassword { get; set; }
+        public bool AgreeToTerms { get; set; }
+        public bool SubscribeNewsletter { get; set; }
+
+        public class RegisterHandler(IIdentityService identitySevice) : IRequestHandler<RegisterCommand, Common.Lib.Result>
         {
-            public async Task Handle(RegisterCommand request, CancellationToken cancellationToken)
+            public async Task<Common.Lib.Result> Handle(RegisterCommand request, CancellationToken cancellationToken)
             {
-                await Task.CompletedTask;
-                ;
+                try
+                {
+                    await identitySevice.SignUpUserAsync(request, cancellationToken);
+                    return Common.Lib.Result.Accept();
+                }
+                catch (Exception ex)
+                {
+                    return Common.Lib.Result.Fail(new Error("Something went wrong", ex.Message));
+                }
             }
         }
     }
