@@ -30,18 +30,27 @@ jobs:
       - name: Determine next version
         id: version 
         run: | 
-          REPO="${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE }}" 
-          echo "Fetching tags for $REPO ..." 
-          TAGS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \ https://api.github.com/users/${{ env.OWNER }}/packages/container/${{ env.IMAGE }}/versions \ | jq -r '.[].metadata.container.tags[]?' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V || true)
-          echo "Existing tags: $TAGS" 
-          if [ -z "$TAGS" ]; then NEXT_VERSION="v1.0.0" 
-          else 
-            LATEST=$(echo "$TAGS" | tail -n 1) 
-            MAJOR=$(echo $LATEST | cut -d. -f1 | tr -d v) 
-            MINOR=$(echo $LATEST | cut -d. -f2) 
-            PATCH=$(echo $LATEST | cut -d. -f3) 
-            NEXT_PATCH=$((PATCH + 1)) 
-            NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}" 
+          API_URL="https://api.github.com/users/${{ env.OWNER }}/packages/container/${{ env.IMAGE }}/versions"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$API_URL")
+          if [ "$STATUS" -ne 200 ]; then
+            API_URL="https://api.github.com/orgs/${{ env.OWNER }}/packages/container/${{ env.IMAGE }}/versions"
+          fi
+
+          TAGS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$API_URL" \
+          | jq -r '.[].metadata.container.tags[]?' \
+          | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V || true)
+
+          echo "Existing tags: $TAGS"
+
+          if [ -z "$TAGS" ]; then
+            NEXT_VERSION="v1.0.0"
+          else
+            LATEST=$(echo "$TAGS" | tail -n 1)
+            MAJOR=$(echo "$LATEST" | cut -d. -f1 | tr -d v)
+            MINOR=$(echo "$LATEST" | cut -d. -f2)
+            PATCH=$(echo "$LATEST" | cut -d. -f3)
+            NEXT_PATCH=$((PATCH + 1))
+            NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
           fi 
             echo "Next version: $NEXT_VERSION"
             echo "VERSION=$NEXT_VERSION" >> $GITHUB_ENV
