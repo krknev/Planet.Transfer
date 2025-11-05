@@ -1,4 +1,5 @@
 using Planet.Transfer.Api.Application;
+using Planet.Transfer.Api.Infrastructure;
 using Planet.Transfer.Api.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 //});
 builder.Services
     .AddApplicationConfiguration(builder.Configuration)
+    .AddInfrastructureConfiguration(builder.Configuration)
     .AddApiComponents(builder.Configuration)
     ;
 
